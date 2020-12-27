@@ -1,0 +1,50 @@
+#Login
+az login
+
+#Create resource group
+az group create --name resource-group-west --location westus2
+
+#Delete resource group
+az group delete -n resource-group-west
+
+#VM
+# linux-vm-west
+# udacityadmin - UdacityADmin99$
+
+#Create VM
+az vm create \
+   --resource-group "resource-group-west" \
+   --name "linux-vm-west" \
+   --location "westus2" \
+   --image "UbuntuLTS" \
+   --size "Standard_B1ls" \
+   --admin-username "udacityadmin" \
+   --generate-ssh-keys \
+   --verbose
+
+#Opon ports
+az vm open-port \
+    --port "80" \
+    --resource-group "resource-group-west" \
+    --name "linux-vm-west"
+
+#List VM IP
+az vm list-ip-addresses -g resource-group-west -n linux-vm-west
+
+#Delete VM
+az vm delete \
+   --resource-group "resource-group-west" \
+   --name "linux-vm-west"
+
+# ---
+#Spin up Web App (inside directory)
+az webapp up \
+ --resource-group resource-group-west \
+ --name hello-world1234 \
+ --sku F1 \
+ --verbose
+
+#Delete Web App
+az webapp delete \
+    --name hello-world1234 \
+    --resource-group resource-group-west
