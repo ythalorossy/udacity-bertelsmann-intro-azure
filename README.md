@@ -1,2 +1,3 @@
-# udacity-bertelsmann-intro-azure
-# udacity-bertelsmann-intro-azure
+# Udacity Bertelsmann Scholarship - Introduction to Azure Applications
+
+https://www.udacity.com/scholarships
