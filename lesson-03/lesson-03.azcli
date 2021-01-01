@@ -1,0 +1,75 @@
+
+# Create SQL Server
+
+az sql server create \
+	--admin-user udacityadmin \
+	--admin-password p@ssword1234 \
+	--name yross-sql-server \
+	--resource-group resource-group-west \
+	--location westus2 \
+	--enable-public-network true \
+	--verbose
+
+# Create a firewall rule
+
+az sql server firewall-rule create \
+	-g resource-group-west \
+	-s yross-sql-server \
+	-n azureaccess \
+	--start-ip-address 0.0.0.0 \
+	--end-ip-address 0.0.0.0 \
+	--verbose
+
+# Create clientip firewall rule
+
+az sql server firewall-rule create \
+	-g resource-group-west \
+	-s yross-sql-server \
+	-n clientip \
+	--start-ip-address <PUBLIC-IP-ADDRESS> \
+	--end-ip-address <PUBLIC_IP_ADDRESS> \
+	--verbose
+
+# Create SQL Database
+
+az sql db create \
+	--name yross-sql-database-db \
+	--resource-group resource-group-west \
+	--server yross-sql-server \
+	--tier Basic \
+	--verbose
+ 
+# Delete SQL Database
+ 
+az sql db delete \
+	--name yross-sql-database-db \
+	--resource-group resource-group-west \
+	--server yross-sql-server \
+	--verbose
+ 
+# Delete SQL Server
+
+az sql server delete \
+	--name yross-sql-server \
+	--resource-group resource-group-west \
+	--verbose
+ 
+###
+
+# Create Storage Account (should be lowecase, number)
+
+az storage account create \
+	--name yrossaccount01 \
+	--resource-group resource-group-west \
+	--location westus2
+
+# Create Container inside Storage
+
+az storage container create \
+	--account-name yrossaccount01 \
+	--name images \
+	--auth-mode login \
+	--public-access container
+	
+	
+	
