@@ -30,9 +30,13 @@ def logout():
     if session.get('user'): # Used MS Login
         # Wipe out user and its token cache from session
         session.clear()
-        # TODO: Also logout from your tenant's web session
+        # Also logout from your tenant's web session
         #   And make sure to redirect from there back to the login page
         pass
+
+        return redirect(
+            Config.AUTHORITY + '/oauth2/v2.0/logout' + 
+            '?post_logout_redirect_uri=' + url_for('login', _external=True))
 
     return redirect(url_for('login'))
 
@@ -45,14 +49,13 @@ def authorized():
         return render_template('auth_error.html', result=request.args)
     if request.args.get('code'):
         cache = _load_cache()
-        # TODO: Acquire a token by authorization code from an MSAL app
+        # Acquire a token by authorization code from an MSAL app
         #  And replace the error dictionary
-        result = _build_msal_app(cache=cache)
-            .acquire_token_by_authorization_code(
-                request.args['code'],
-                scopes=Config.SCOPE,
-                redirect_uri=url_for('authorized', _external=True, _scheme='https'
-            )
+        result = _build_msal_app(cache=cache).acquire_token_by_authorization_code(
+          request.args['code'],
+          scopes=Config.SCOPE,
+          redirect_uri=url_for('authorized', _external=True, _scheme='https')
+          )
         if 'error' in result:
             return render_template('auth_error.html', result=result)
         session['user'] = result.get('id_token_claims')
