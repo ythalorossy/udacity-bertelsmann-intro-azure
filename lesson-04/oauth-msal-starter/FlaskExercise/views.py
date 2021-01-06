@@ -47,7 +47,12 @@ def authorized():
         cache = _load_cache()
         # TODO: Acquire a token by authorization code from an MSAL app
         #  And replace the error dictionary
-        result = {'error': 'Not Implemented', 'error_description': 'Function not implemented.'}
+        result = _build_msal_app(cache=cache)
+            .acquire_token_by_authorization_code(
+                request.args['code'],
+                scopes=Config.SCOPE,
+                redirect_uri=url_for('authorized', _external=True, _scheme='https'
+            )
         if 'error' in result:
             return render_template('auth_error.html', result=result)
         session['user'] = result.get('id_token_claims')
@@ -74,10 +79,19 @@ def _save_cache(cache):
 
 
 def _build_msal_app(cache=None, authority=None):
-    # TODO: Create and return a Confidential Client Application from msal
-    return None
+    # Create and return a Confidential Client Application from msal
+    return msal.ConfidentialClientApplication(
+        Config.CLIENT_ID, 
+        authority=authority or Config.AUTHORITY,
+        client_credential=Config.CLIENT_SECRET,
+        token_cache=cache
+    )
 
 
 def _build_auth_url(authority=None, scopes=None, state=None):
-    # TODO: Get the authorization request URL from a built msal app, and return it
-    return None
+    # Get the authorization request URL from a built msal app, and return it
+    return _build_msal_app(authority).get_authorization_request_url(
+        scopes or [],
+        state=state or str(uuid.uuid4()),
+        redirect_uri=url_for('authorized', _external=True, _scheme='https')
+    )
